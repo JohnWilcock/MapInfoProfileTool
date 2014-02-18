@@ -1,0 +1,400 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+MITile
+</name>
+</assembly>
+<members>
+<member name="M:MITile.Dlg.#ctor">
+	<summary> 
+ Construction 
+ </summary>
+</member><member name="M:MITile.Dlg.#ctor(MITile.Controller)">
+	<summary>
+ Parameterised Construction
+ <param name="controller"></param>
+	</summary>
+</member><member name="M:MITile.Dlg.NViewDlg_Load(System.Object,System.EventArgs)">
+	<summary> 
+ Named View dialog Load event handler 
+ </summary>
+	<param name="sender"></param>
+	<param name="e"></param>
+</member><member name="M:MITile.Dlg.SetDockPosition">
+	<summary>
+ Set the dialog position and docking state 
+ </summary>
+</member><member name="F:MITile.Dlg.components">
+	<summary> 
+ Required designer variable. 
+ </summary>
+</member><member name="M:MITile.Dlg.Dispose(System.Boolean)">
+	<summary> 
+ Clean up any resources being used. 
+ </summary>
+	<param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+</member><member name="M:MITile.Dlg.InitializeComponent">
+	<summary> 
+ Required method for Designer support - do not modify 
+ the contents of this method with the code editor. 
+ </summary>
+</member><member name="P:My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="P:My.Resources.Resources.CONFIRM_NODE_DELETE">
+	<summary>
+  Looks up a localized string similar to Are you sure you want to delete this node?.
+</summary>
+</member><member name="P:My.Resources.Resources.CONFIRM_NODE_DELETE_MSG_TITLE">
+	<summary>
+  Looks up a localized string similar to Delete Node.
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_EMPTY_VIEW_NAME">
+	<summary>
+  Looks up a localized string similar to Must enter the name of view..
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_EMPTY_VNAME_MSG_TITLE">
+	<summary>
+  Looks up a localized string similar to View Name.
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_FRONT_WIN_NOT_MAPPER">
+	<summary>
+  Looks up a localized string similar to Front window is not a mapper..
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_INVALID_DROP">
+	<summary>
+  Looks up a localized string similar to Dropping a parent node on a child node is not allowed..
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_INVALID_DROP_MSG_TITLE">
+	<summary>
+  Looks up a localized string similar to Invalid Drop.
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_INVALID_XML">
+	<summary>
+  Looks up a localized string similar to Invalid XML.
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_MB_DLG_NOT_DISPLAYED">
+	<summary>
+  Looks up a localized string similar to Unable to display the dialog..
+</summary>
+</member><member name="P:My.Resources.Resources.ERR_NO_WIN_OPEN">
+	<summary>
+  Looks up a localized string similar to A Map window must be open before you can use Named Views..
+</summary>
+</member><member name="P:My.Resources.Resources.STR_ABOUT">
+	<summary>
+  Looks up a localized string similar to About {0}.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_ABT_DESC1">
+	<summary>
+  Looks up a localized string similar to This application lets you save a Map window's current zoom and center as a named view. You assign each view a name (e.g. 'Downtown', 'North-east', etc.) Later, you can return to that view by choosing the name from a dialog..
+</summary>
+</member><member name="P:My.Resources.Resources.STR_ABT_DESC2">
+	<summary>
+  Looks up a localized string similar to To use Named Views, make a Map window the active window, then choose Tools &gt; Named Views.  Or, click on the Named Views button on the Tools buttonpad..
+</summary>
+</member><member name="P:My.Resources.Resources.STR_DEF_FOLDER_NAME">
+	<summary>
+  Looks up a localized string similar to New Folder.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_APP_DESC">
+	<summary>
+  Looks up a localized string similar to Named Views.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_APP_FILENAME">
+	<summary>
+  Looks up a localized string similar to NamedViews.MBX.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_BTN_PAD_HLPMSG">
+	<summary>
+  Looks up a localized string similar to Display the Named Views dialog..
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_BTN_PAD_TOOLS">
+	<summary>
+  Looks up a localized string similar to Tools.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_MNU_ABOUT">
+	<summary>
+  Looks up a localized string similar to &amp;About Named Views....
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_MNU_EXIT">
+	<summary>
+  Looks up a localized string similar to E&amp;xit Named Views.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_MNU_NAMEDVIEWS">
+	<summary>
+  Looks up a localized string similar to &amp;Named Views....
+</summary>
+</member><member name="P:My.Resources.Resources.STR_MB_MNU_SUBTITLE">
+	<summary>
+  Looks up a localized string similar to &amp;Named Views.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_TOOLTIP_VIEW">
+	<summary>
+  Looks up a localized string similar to Center = ({0}, {1}) - Zoom = {2} {3}.
+</summary>
+</member><member name="P:My.Resources.Resources.STR_VERSION">
+	<summary>
+  Looks up a localized string similar to Version {0}.
+</summary>
+</member><member name="T:My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="M:MITile.InteropHelper.GetAppVersion">
+	<summary>
+ Gets the MapInfo Professional version number
+ </summary>
+	<returns>Version number (multiplied by 100) as string</returns>
+</member><member name="M:MITile.InteropHelper.GetFrontWindow">
+	<summary>
+ Get front window (child window) from the running instance of MapInfo Professional
+ </summary>
+	<returns>Id of the front window</returns>
+</member><member name="M:MITile.InteropHelper.GetWindowType(System.Int32)">
+	<summary>
+ Returns window type for given window id.
+ </summary>
+	<param name="windowId"></param>
+	<returns>Window type</returns>
+</member><member name="M:MITile.InteropHelper.GetMapperInfo(System.Int32,System.Int32)">
+	<summary>
+ Gets the view information from a mapper window in
+ MapInfo Professional application
+ </summary>
+	<remarks>
+ MapBasic's MapperInfo function can return numeric information
+ such as Zoom width.  However, MapInfoApplication.Eval returns 
+ results as strings, so if you request numeric information such
+ as MAPPER_INFO_ZOOM, Eval will return a string such as "1234.5"
+ (with a period as the decimal separator, regardless of 
+ the user's regional settings).  
+ 
+ Instead of parsing such String results into Double values, we 
+ will return the String results.  The string representation
+ of numeric values is ideal for this application, because the 
+ string formatting returned by the Eval method (i.e. always using 
+ the period as the decimal separator) is appropriate for use  
+ in the Set Map statement we will be constructing later on.   
+ 
+ </remarks>
+	<param name="windowId">identification number of mapper window</param>
+	<param name="infoType">The type of information</param>
+	<returns>The requested information</returns>
+</member><member name="M:MITile.InteropHelper.GetMapperCoordSys(System.Int32)">
+	<summary>
+ Get a string representing the coordinate system of the map window 
+ </summary>
+	<param name="windowId">identification number of mapper window</param>
+	<returns>a CoordSys clause string</returns>
+	<remarks></remarks>
+</member><member name="M:MITile.InteropHelper.GetMapperDistanceUnit(System.Int32)">
+	<summary>
+ Get a string representing the distance unit in use in a specific map window
+ </summary>
+	<param name="windowId">identification number of mapper window</param>
+	<returns>a string representing a distance unit, such as mi or km </returns>
+	<remarks></remarks>
+</member><member name="M:MITile.InteropHelper.GetMapperZoom(System.Int32)">
+	<summary>
+ Gets mapper window zoom value
+ </summary>
+	<param name="windowId">identification number of mapper window</param>
+	<returns>Zoom value of mapper window's current view</returns>
+</member><member name="M:MITile.InteropHelper.GetMapperCenterX(System.Int32)">
+	<summary>
+ Gets mapper window center X value
+ </summary>
+	<param name="windowId">window identification number of mapper window</param>
+	<returns>Center Y of mapper window's current view</returns>
+</member><member name="M:MITile.InteropHelper.GetMapperCenterY(System.Int32)">
+	<summary>
+ Gets mapper window center Y value
+ </summary>
+	<param name="windowId">window identification number of mapper window</param>
+	<returns>Center X of mapper window's current view</returns>
+</member><member name="M:MITile.InteropHelper.GetSessionDistanceUnit">
+	<summary>
+ Gets a string representing MapInfo's current distance units, such as mi or km. 
+ Defaults to "mi" but can be reset through the Set Distance Units statement. 
+ </summary>
+	<returns>string such as "mi"</returns>
+	<remarks></remarks>
+</member><member name="M:MITile.InteropHelper.GetSessionCoordSys">
+	<summary>
+ Get a string representing the CoordSys clause, of the coordinate system
+ that is currently in effect. 
+ </summary>
+	<returns>string such as "CoordSys Earth"</returns>
+	<remarks></remarks>
+</member><member name="M:MITile.InteropHelper.SetSessionCoordSys(System.String)">
+	<summary>
+ Sets the current coordinate system. 
+ </summary>
+	<param name="csys">string such as "CoordSys Earth"</param>
+	<remarks></remarks>
+</member><member name="M:MITile.InteropHelper.GetFormattedString(System.String)">
+	<summary>
+ Given a string representation of a number, in invariant formatting 
+ (always using the period as the decimal separator), return a  
+ string formatted according to the user's current system settings. 
+ </summary>
+	<param name="numericString">a number string with period as the decimal separator, if any</param>
+	<returns>a number string formatted with the current system settings</returns>
+	<remarks>
+ The resulting number string is appropriate for displaying numbers 
+ in the user interface, but not appropriate for constructing MapBasic 
+ statements.  When you construct a MapBasic statement string (to 
+ be executed through a call to the Do method), any numeric literals
+ in the string must use period as the decimal separator, even if 
+ the user's system's regional settings use some other character 
+ as the decimal separator. 
+ </remarks>
+</member><member name="M:MITile.InteropHelper.SetView(System.Int32,System.String,System.String,System.String,System.String,System.String)">
+	<summary>
+ Sets the current view of mapper window represented by windowId
+ </summary>
+	<param name="windowId">Window identification number of mapper window</param>
+	<param name="centerX">New center X of the mapper window</param>
+	<param name="centerY">New center Y of the mapper window</param>
+	<param name="mapperZoom">New zoom of the mapper window</param>
+	<param name="unit">Distance unit string that applies to mapperZoom, such as mi or km </param>
+</member><member name="M:MITile.InteropHelper.GetMapWindowId">
+	<summary>
+ Get the ID of the front window.  Displays a message
+ and returns 0 if there is no window open, or the 
+ front window is not a mapper
+ </summary>
+	<returns></returns>
+</member><member name="F:ConvertXY.components">
+	<summary>
+ Designer variable used to keep track of non-visual components.
+ </summary>
+</member><member name="M:ConvertXY.Dispose(System.Boolean)">
+	<summary>
+ Disposes resources used by the form.
+ </summary>
+	<param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+</member><member name="M:ConvertXY.InitializeComponent">
+	<summary>
+ This method is required for Windows Forms designer support.
+ Do not change the method contents inside the source code editor. The Forms designer might
+ not be able to load this method if it was changed manually.
+ </summary>
+</member><member name="F:ConvertNGR.components">
+	<summary>
+ Designer variable used to keep track of non-visual components.
+ </summary>
+</member><member name="M:ConvertNGR.Dispose(System.Boolean)">
+	<summary>
+ Disposes resources used by the form.
+ </summary>
+	<param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+</member><member name="M:ConvertNGR.InitializeComponent">
+	<summary>
+ This method is required for Windows Forms designer support.
+ Do not change the method contents inside the source code editor. The Forms designer might
+ not be able to load this method if it was changed manually.
+ </summary>
+</member><member name="M:MITile.Controller.#ctor">
+	<summary>
+ Construction
+ </summary>
+</member><member name="M:MITile.Controller.GetResItemStr(System.String)">
+	<summary>
+ This is called from MapBasic code
+ to get a named resource string
+ </summary>
+	<param name="itemName">Name of the string resource</param>
+	<returns>Value of the string resource</returns>
+</member><member name="M:MITile.Controller.ShowAboutDlg(System.Int32)">
+	<summary>
+ This function is called from MapBasic code
+ to display the About dialog.
+ </summary>
+	<param name="hMainWnd"></param>
+	<returns></returns>
+</member><member name="M:MITile.Controller.ShowDlg(System.Int32)">
+	<summary>
+ This function is called from MapBasic code
+ to display the Named View dialog.
+ </summary>
+	<param name="hMainWnd"></param>
+	<returns></returns>
+</member><member name="M:MITile.Controller.CloseNViewDlg">
+	<summary>
+ This function is called from MapBasic code
+ to close the Named View dialog before exiting.
+ </summary>
+</member><member name="M:MITile.Controller.GetWindowWrapper(System.Int32)">
+	<summary>
+ Returns the window wrapper.
+ If window wrapper is null it correctly initializes the static member
+ </summary>
+	<param name="hMainWnd">Handle to a window</param>
+	<returns>Window wrapper for the given handle</returns>
+</member><member name="M:MITile.Controller.DockWindowClose">
+	<summary>
+ Close the dockable usercontrol(Named view Dialog)
+ </summary>
+</member><member name="T:MITile.Controller.RECT">
+	<summary>
+ Structure for storing left, right, top, bottom information of floating dialog
+ </summary>
+</member><member name="T:MITile.Controller.DockState">
+	<summary>
+ Structure for storing docking information
+ </summary>
+</member><member name="T:MITile.Controller.DockWindowState">
+	<summary>
+ Class for docking state related information of dockable window
+ </summary>
+</member><member name="M:MITile.Controller.GetDockWindowClosed">
+	<summary>
+ get the open/close status of dockable user control(Named view dialog)
+ </summary>
+</member><member name="M:MITile.Controller.getDockWindowState">
+	<summary>
+ Method for getting the Docking state related information 
+ </summary>
+</member><member name="M:MITile.Controller.SetDockWindowPositionFromFile">
+	<summary>
+ Method for Setting the Docking state from xml file containg
+ docking persistance information
+ </summary>
+</member><member name="M:MITile.Controller.SetDefaultDockingInfo">
+	<summary>
+ Method for setting some resaonable position/ docked state
+ </summary>
+</member><member name="M:MITile.Controller.ApplyDockWindowState">
+	<summary>
+ Method for setting the docking and position of dockable window
+ </summary>
+</member><member name="M:MITile.Controller.LoadDockWindowStateFromFile">
+	<summary>
+ Load the dock window state from the xml file
+ It uses mutexes to synchronize the threads accessing
+ the xml file
+ </summary>
+</member><member name="M:MITile.Controller.WriteDockWindowStateToFile">
+	<summary>
+ Write the dock window state to file
+ It uses mutexes to synchronize the threads accessing
+ the xml file
+ </summary>
+</member><member name="T:MITile.Controller.WindowWrapper">
+	<summary>
+ This class implements IWin32Window wrapping a handle to window.
+ It is used to wrap the handle to a running instance of 
+ MapInfo Professional application.
+ </summary>
+</member>
+</members>
+</doc>

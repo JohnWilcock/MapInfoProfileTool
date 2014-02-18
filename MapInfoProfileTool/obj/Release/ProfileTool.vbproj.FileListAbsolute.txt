@@ -1,0 +1,7 @@
+D:\Code\MapInfo\ProfileTool\ProfileTool.dll
+D:\Code\MapInfo\ProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.vbprojResolveAssemblyReference.cache
+D:\Code\MapInfo\ProfileTool\MapInfoProfileTool\obj\Release\AboutBox1.resources
+D:\Code\MapInfo\ProfileTool\MapInfoProfileTool\obj\Release\Resources.resources
+D:\Code\MapInfo\ProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.Dlg.resources
+D:\Code\MapInfo\ProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.vbproj.GenerateResource.Cache
+D:\Code\MapInfo\ProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.dll

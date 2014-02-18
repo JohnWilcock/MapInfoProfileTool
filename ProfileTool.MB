@@ -1,0 +1,562 @@
+'/*****************************************************************************
+'*       Author JWilcock 2014
+'*      Profile Tool for native mapinfo Grids v1.0
+'*****************************************************************************
+
+Declare Function GE_OpenGrid lib "migrid.dll" 
+	(filein As string, byval cache as integer, hgrid as integer) As logical
+
+Declare Function GE_GetCoordSysInfo lib "migrid.dll"
+	(ByVal hgrid as integer, clau as string, mix as float, miy as float, max as float, may as float) as logical
+
+Declare Function GE_GetContinuousMinMax lib "migrid.dll"
+	(ByVal hgrid as integer, zmin as float, zmax as float) as logical
+
+Declare Function GE_GetDimensions lib "migrid.dll"
+	(ByVal hgrid as integer, wid as integer, hei as integer) as logical
+
+Declare Function GE_GetContinuousValue lib "migrid.dll"
+	(ByVal hgrid as integer,ByVal icol as integer,ByVal jrow as integer, zval as float, ax as smallint) as logical
+
+Declare Function GE_GetGridType lib "migrid.dll"
+	(ByVal hgrid as integer, gtyp as smallint) as logical
+
+Declare Function GE_StartRead lib "migrid.dll"
+	(ByVal hgrid as integer) as logical
+
+Declare Function GE_EndRead lib "migrid.dll"
+	(ByVal hgrid as integer) as logical
+	
+Declare Function GE_CloseGrid lib "migrid.dll" 
+  	(hgrid as integer) as logical
+
+
+'****************************************************************************
+' Include files and Define statements
+'****************************************************************************
+Include "C:\Program Files (x86)\MapInfo\MapBasic\MAPBASIC.DEF"
+Include "C:\Program Files (x86)\MapInfo\MAPBASIC\menu.def"  
+Include "C:\Program Files (x86)\MapInfo\MAPBASIC\icons.def" 
+Include "C:\Program Files (x86)\MapInfo\MAPBASIC\auto_lib.def" 
+'****************************************************************************
+
+
+'****************************************************************************
+' .NET Functions
+'****************************************************************************
+Declare Method GetResItemStr Class "ProfileTool.Controller" Lib "ProfileTool.dll" (ByVal itemName As String) As String
+Declare Method ShowDlg Class "ProfileTool.Controller" Lib "ProfileTool.dll" (ByVal hwnd as Integer) As Logical
+Declare Method CloseDlg Class "ProfileTool.Controller" Lib "ProfileTool.dll" () As Logical
+Declare Method XsecLine Class "ProfileTool.Dlg" Lib "ProfileTool.dll" (ByVal ReturnString as string) As Logical
+Declare Method numGrids Class "ProfileTool.Dlg" Lib "ProfileTool.dll" as integer
+Declare Method gridPath Class "ProfileTool.Dlg" Lib "ProfileTool.dll" (ByVal x As Integer) as string
+Declare Method nextGrid Class "ProfileTool.Dlg" Lib "ProfileTool.dll" (ByVal x as Integer) As Logical
+Declare Method  numSamplePoints Class "ProfileTool.Dlg" Lib "ProfileTool.dll" as Integer
+Declare Method  isVerbose Class "ProfileTool.Dlg" Lib "ProfileTool.dll" as logical
+'****************************************************************************
+' Declare sub procedures
+'****************************************************************************
+Declare Sub Main
+Declare Sub EndHandler 
+Declare Sub loader
+Declare Sub ProfileTool
+Declare Sub createIntervals(ByVal numNodes As Integer, ByVal intervals As Integer)
+Declare Function getXYfromChainage(ByVal angle As Float, ByVal seg_length As Float, ByVal intervals As Integer, ByVal interval As Float, ByVal x1 As Float, ByVal x2 As Float, ByVal y1 As Float, ByVal y2 As Float) as logical
+Declare Sub populateZlist(ByVal gridPath As String)
+Declare Sub cycleThroughGrids
+Declare Sub OpenGrid(ByVal gridPath As String)
+Declare Sub closeGrid
+Declare Function getGridZvalues(ByVal iX As Float, ByVal iY As Float) as float
+
+' Handlers for dialog controls: 
+Declare Sub bye 
+
+declare function RegisterTool lib "tooltabl.dll" (
+	byval title as string,
+	byval description as string,
+	byval location as string,
+	byval owner as string,
+byval autoload as integer) as integer
+declare function UnregisterAllByOwner lib "tooltabl.dll" (byval owner as string) as integer
+
+'****************************************************************************
+' Declare global variables. 
+'****************************************************************************
+Global window_id As Integer   ' Window ID of current (map) window 
+global numNodes as integer
+global  drawnLine as object
+
+Global xList() as float
+Global yList() as float
+Global xIntervalList() as float
+Global yIntervalList() as float
+Global zIntervalList() as float
+Global ELEVarray() as float 'distance
+
+Global XsecLength as float
+
+Global curX as float
+Global curY as float
+
+Global hgrid as integer
+Global PI as float 
+Global widt as integer
+Global heig as integer
+Global xmin as float
+Global ymin as float
+Global xmax as float
+Global ymax as float
+Global zmin as float
+Global zmax as float
+Global zval as float
+Global lCol as integer
+Global lRow as integer
+global nSamplePoints as integer
+global verbose as logical
+   
+Global ReturnString as string 
+   
+Sub Main
+	PI = 3.14159265359
+	
+  OnError Goto HandleError
+  ' Assign some global variables, so that the Auto-Load button 
+  ' (in the About dialog) can use the library routines 
+  ' stored in AUTO_LIB.MBO.  
+  gsAppFilename = GetResItemStr("STR_MB_APP_FILENAME")    ' name of MapBasic app file  
+  gsAppDescription = GetResItemStr("STR_MB_APP_DESC")      ' short description of MB application 
+
+'check if file exists 
+if FileExists(GetFolderPath$(-3) + "\" + "ProfileTool.tab") then
+	'do nothing
+else
+
+
+	dim regTool as integer
+	dim thePath as string  
+	thePath = ApplicationDirectory$( ) + "ProfileTool.mbx"
+	regTool = RegisterTool("ProfileTool", "Get Elevation profiles",thePath,"JWilcock",1)
+end if
+
+
+ call loader
+     'Show 
+
+'create ptool hidden button pad 
+Create ButtonPad "ProfileTool"  As
+	toolbutton
+	drawmode DM_CUSTOM_POLYLINE
+	Calling cycleThroughGrids
+	cursor 2
+	ID 881
+	ToolbarPosition (0,1)
+	'Show
+	Fixed
+	hide
+	
+  Exit Sub
+  HandleError:
+    Note "Main: " + Error$()
+    Resume Next
+End Sub
+
+'****************************************************************************
+' 
+'
+' 
+' 
+'****************************************************************************
+Sub loader 
+  OnError Goto HandleError
+  'If NumWindows() < 1 Then 
+  '  Note GetResItemStr("ERR_NO_WIN_OPEN") 
+  '  Exit Sub 
+  'End If 
+
+  'window_id = FrontWindow()
+    
+ ' If WindowInfo(window_id, WIN_INFO_TYPE ) <> WIN_MAPPER Then 
+  '  Note GetResItemStr("ERR_FRONT_WIN_NOT_MAPPER") 
+  '  Exit Sub 
+  'End If  
+   
+  ' Display a dialog 
+ 
+  Dim ret As Logical
+  Dim hwndPro as Integer
+  hwndPro = SystemInfo(SYS_INFO_MAPINFOWND)
+  ret = ShowDlg(hwndPro)
+  If Not ret Then
+    Note GetResItemStr("ERR_MB_DLG_NOT_DISPLAYED")
+  End If
+  Exit Sub
+  HandleError:
+    Note "ProfileTool: " + Error$()
+    Resume Next
+End Sub
+
+
+
+'*****************************************************************
+' If user chooses Close menu item, shut down. 
+Sub bye 
+  OnError Goto HandleError
+  End Program
+  HandleError:
+    Note "bye: " + Error$()
+    Resume Next 
+End Sub 
+
+Sub  EndHandler
+  OnError Goto HandleError
+  Dim ret as Logical
+  ret = CloseDlg()
+  Exit Sub
+  HandleError:
+    Note "EndHandler: " + Error$()
+    Resume Next
+end sub
+
+
+' ////////////////////// end 
+
+sub ProfileTool
+
+	dim hasRun as logical
+	dim x as integer
+	
+	'get line drawn by user
+	drawnLine = CommandInfo(CMD_INFO_CUSTOM_OBJ)
+
+	'put line x y in array
+	numNodes = objectinfo(drawnLine, OBJ_INFO_NPNTS)
+	redim  xList(numNodes)
+	redim  yList(numNodes)
+	
+	
+	'Run Command coord
+	for x = 1 to numNodes 
+		xList(x) = (ObjectNodeX( drawnLine, 1, x))
+		yList(x) = (ObjectNodeY( drawnLine, 1, x))
+	Next
+	XsecLength = ObjectLen( drawnLine, "m") 'must be same units as grid
+
+	call createIntervals(numNodes, nSamplePoints)
+
+end sub
+
+ 
+       	
+ 
+        Sub createIntervals(ByVal numNodes As Integer, ByVal intervals As Integer)
+            'convert to set of xy dependant on interval chosen
+            dim done as logical
+            Dim xsec_done_length As Float
+            Dim xsec_running_total As Float
+			xsec_done_length = 0
+			xsec_running_total = 0
+			
+            Dim interval As Float 
+            interval = XsecLength / intervals
+            if verbose = true then
+	            print "SEGMENTS ********************************"
+	            print "original intervals: " + intervals
+	            print "Xsec full length: " + XsecLength
+	            print "interval: " + interval
+	            print "nodes: " + numNodes
+			end if
+            Dim xyarray_count As Float
+			xyarray_count = 1
+			
+            Dim xsec_remainder As Float
+            Dim cum_xsec_remainder As Float
+            xsec_remainder  = 0
+            cum_xsec_remainder = 0
+            
+            dim vert As Integer
+            For vert  = 1 To numNodes - 1
+
+                'get first 2 matching points
+                Dim xsec_seg_length As Float 
+                xsec_seg_length = Sqr((((yList(vert) - yList(vert + 1))^2) + ((xList(vert) - xList(vert + 1))^2)))
+                if verbose = true then
+	                print "VERTICIES ********************************"
+	                print "segment run" + vert + ":" + (xList(vert) - xList(vert + 1))
+	                print "segment rise " + vert + ":" + (yList(vert) - yList(vert + 1))
+	                print "segment " + vert + " Coords: 1=" + xList(vert) + "," + yList(vert) + ".  2="+ xList(vert+1) + "," + yList(vert+1)
+	                print "segment length " + vert + ":" + xsec_seg_length
+                end if
+                
+                Dim xsec_count As Integer 
+                xsec_count= 1
+                
+                Dim angle As Float 
+                angle = (Atn((xList(vert + 1) - xList(vert)) / (yList(vert + 1) - yList(vert)))) / (Pi / 180)  'must convert from rads
+                if verbose = true then
+                	print "angle " + vert + ":" + angle
+				end if
+				
+                While (xsec_running_total) < (xsec_done_length + xsec_seg_length)
+                	
+                    done = getXYfromChainage(angle, xsec_seg_length, interval, (xsec_count-1), xList(vert), xList(vert + 1), yList(vert), yList(vert + 1))
+                    
+                    redim  xIntervalList(xyarray_count)
+                    redim  yIntervalList(xyarray_count)
+                    redim  zIntervalList(xyarray_count)
+                    redim  ELEVarray(xyarray_count)
+                    xIntervalList(xyarray_count) = curX
+                    yIntervalList(xyarray_count) = curY
+                    
+                    if verbose = true then
+						print "SAMPLE POINTS ********************************"
+						print "sample " + xsec_count + ". coord:" +  curX + ", " +  curY
+					end if
+					
+                    If xsec_remainder = 0 Then                	
+                        ELEVarray(xyarray_count) = ((interval * xyarray_count) - -cum_xsec_remainder)
+                    Else
+                        ELEVarray(xyarray_count) = ((interval * (xyarray_count)) - -cum_xsec_remainder)
+                    End If
+                    if verbose = true then
+						print "sample " + xsec_count + ". Length:" +  ELEVarray(xyarray_count)
+					end if
+					
+                    xsec_count = xsec_count + 1
+                    xyarray_count = xyarray_count + 1
+                    xsec_running_total = xsec_running_total + interval
+                    xsec_remainder = 0
+                Wend
+
+                xsec_done_length = xsec_done_length + xsec_seg_length
+                xsec_remainder = xsec_seg_length - (interval * xsec_count)
+                xsec_running_total = xsec_done_length
+                cum_xsec_remainder = cum_xsec_remainder + xsec_remainder
+            Next
+
+            'now get the z values
+            'call cycleThroughGrids()
+        End Sub
+
+
+        Sub cycleThroughGrids()
+        
+        'set number of sample points
+        nSamplePoints = numSamplePoints()
+        
+        'is verbose
+        verbose = isVerbose()
+        
+        'reset return string to blank
+        ReturnString = ""
+        
+            'cycles through grids listed in checkedlistbox1, gets z values for those that are checked
+            dim i As Integer
+            dim numberOfGrids as integer
+            numberOfGrids = numGrids()
+            'validate - if no grid then exit
+            if numberOfGrids = 0 then
+            	note "No grids recognised, press refresh grids or make sure the grids are loaded through File>Open>(Files of type - Grids)"
+            	exit sub
+            End If
+            For i  = 0 To numberOfGrids - 1
+                If nextGrid(i) = True Then
+                   call populateZlist(gridPath(i))
+                   
+                   'add break to returnstring to denote a new grid
+                   ReturnString = ReturnString + "|"
+                End If
+
+            Next
+			
+			 'validate - if no grids checked then exit
+			if returnString = "" then
+				note "No grids checked, check the box next to the grid name in the profile tool grid list"
+            	exit sub
+			End If
+			
+			'now adddistance  to returnString
+			ReturnString = ReturnString + "Distance"
+			For i  = 1 To ubound(xIntervalList) - 1              
+                'add x values to return string
+                ReturnString = ReturnString + "," + ELEVarray(i)
+            Next
+			
+			'now add x,y and sample points to returnString
+			ReturnString = ReturnString + "|X"
+			For i  = 1 To ubound(xIntervalList) - 1              
+                'add x values to return string
+                ReturnString = ReturnString + "," + xIntervalList(i)
+            Next
+            ReturnString = ReturnString + "|Y"
+            
+            For i  = 1 To ubound(xIntervalList) - 1              
+                'add y values to return string
+                ReturnString = ReturnString + "," + yIntervalList(i)
+            Next
+            
+            'send data to .net
+            dim iret as logical
+             iret = XsecLine(ReturnString)
+            
+        End Sub
+
+
+        'self explanitory !
+         Function getXYfromChainage(ByVal angle As Float, ByVal seg_length As Float, ByVal intervals As Integer, ByVal interval As Float, ByVal x1 As Float, ByVal x2 As Float, ByVal y1 As Float, ByVal y2 As Float) as logical
+			curX = 0
+			curY = 0
+			
+            Dim num_seg_intervals As Float 
+            num_seg_intervals= seg_length / intervals
+            
+            Dim rise As Float 
+            rise = y2 - y1
+            
+            Dim runA As Float 
+            runA = x2 - x1
+
+            Dim nX As Float  
+            nX = runA / num_seg_intervals
+            Dim nY As Float
+            nY = rise / num_seg_intervals
+
+            curX = x1 + (nX * interval) 
+            curY = y1 + (nY * interval)
+
+    		getXYfromChainage = true
+
+        End Function
+
+
+
+        Sub populateZlist(ByVal gridPath As String)
+          
+            'open grid for reading
+            call OpenGrid(gridPath)
+			
+			'add grid name as a header
+			ReturnString = ReturnString +  PathToTableName$(gridPath)
+
+			call ProfileTool()
+
+			dim i As Integer
+			'print "intervals for z extraction: " + ubound(xIntervalList) - 1
+            For i  = 1 To ubound(xIntervalList) - 1
+                zIntervalList(i) = getGridZvalues(xIntervalList(i), yIntervalList(i))
+                
+                'add result to return string
+                ReturnString = ReturnString + "," + zIntervalList(i)
+            Next
+
+            'close grid
+            call closeGrid()
+
+        End Sub
+
+        Sub OpenGrid(ByVal gridPath As String)
+
+            'open grid and get handle
+            'Dim iret As logical
+            dim tabPath as string
+            tabPath = gridPath
+            
+            if verbose = true then
+            	print "Tab file: " + gridPath
+            end if
+            dim iret as logical
+            gridPath = RasterTableInfo( PathToTableName$( gridPath ), 1 ) 
+            if verbose = true then
+            	print "Grid file: " + gridPath
+            end if
+            
+            iret = GE_OpenGrid(gridPath, 1024, hGrid)
+            if verbose = true then
+				print "Grid handler: " + hGrid
+			end if
+            'exit if error
+            'If iret = False Then Exit Sub
+
+            
+            dim x as float
+            dim y as float
+            dim xx as float
+            dim yy as float
+            dim pdvalue as float
+
+            dim typg, puchIsNull as smallint
+            dim logicalTEST as string
+
+
+            dim sCmd as string
+
+            dim claus as string
+            claus = Space$(255)
+
+            ' retrieve geographic info for the grid 
+            iret = GE_GetCoordSysInfo(hgrid, claus, xmin, ymin, xmax, ymax)
+            iret = GE_GetDimensions(hgrid, widt, heig)
+            iret = GE_GetGridType(hgrid, typg)
+            iret = GE_GetContinuousMinMax(hgrid, zmin, zmax)
+
+            dim coord as string
+			'coord = "set CoordSys Earth Projection 10, 157, " + chr$(34) + "m" + chr$(34) + ", 0 Bounds (-20037508.3428, -20037508.343) (20037508.3428, 20037508.343)" 'google mecrator
+			'coord = "set  CoordSys Earth Projection 8, 79, " + chr$(34) + "m" + chr$(34) + ", -2, 49, 0.9996012717, 400000, -100000 Bounds (-7845061.1011, -15524202.1641) (8645061.1011, 4470074.53373)" 'BNG
+			'get coord sys of grid file - do not use from grid handler, may be wrong
+			coord = "Set " + tableinfo(PathToTableName$( tabPath ),29) 'coord with bounds
+			if verbose = true then
+				print "grid coord sys: " + tableinfo(PathToTableName$( tabPath ),30)
+			end if
+			
+            Run Command coord
+            
+            iret = GE_StartRead(hGrid)
+            If Not iret Then
+            'errer reading grid
+            	Exit Sub
+            End If
+
+        End Sub
+
+        Sub closeGrid()
+            dim iret as logical
+            ' terminate read of grid
+            iret = GE_EndRead(hGrid)
+
+            ' close grid
+            iret = GE_CloseGrid(hGrid)
+        End Sub
+
+        Function getGridZvalues(ByVal iX As Float, ByVal iY As Float) as float
+			dim x, y, xx, yy as float
+			dim lcol,lrow as integer
+            Dim zResult As Float
+            dim  puchIsNull as smallint
+            dim iret as logical
+            dim pdvalue as float
+
+            x = iX
+            y = iY
+            ' convert position in  coordinates and extract corresponding z value
+            lCol = (Widt * (x - XMin) / (XMax - XMin)) + 0.5
+            lRow = (Heig - Heig * (y - YMin) / (yMax - YMin)) + 0.5
+            xx = XMin + (XMax - XMin) / Widt * (lCol - 0.5)
+            yy = Ymax - (YMax - YMin) / Heig * (lRow - 0.5)
+            iret = GE_GetContinuousValue(hGrid, lCol, lRow, pdvalue, puchIsNull)
+            
+
+            If puchIsNull Then
+                ' distinguish between zero values and NULL 
+                zResult = -999
+            Else
+                zResult = pdvalue
+            End If
+
+            'for debug
+            if verbose = true then
+            	print pdvalue
+			end if
+			
+            getGridZvalues = zResult
+        End Function
+
+
