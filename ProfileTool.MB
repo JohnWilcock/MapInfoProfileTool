@@ -53,6 +53,9 @@ Declare Method gridPath Class "ProfileTool.Dlg" Lib "ProfileTool.dll" (ByVal x A
 Declare Method nextGrid Class "ProfileTool.Dlg" Lib "ProfileTool.dll" (ByVal x as Integer) As Logical
 Declare Method  numSamplePoints Class "ProfileTool.Dlg" Lib "ProfileTool.dll" as Integer
 Declare Method  isVerbose Class "ProfileTool.Dlg" Lib "ProfileTool.dll" as logical
+Declare Method  About Class "ProfileTool.Dlg" Lib "ProfileTool.dll" as logical
+Declare Method  CreateBlank Class "ProfileTool.Dlg" Lib "ProfileTool.dll"
+Declare Method checkGridinMapper Class "ProfileTool.Dlg" Lib "ProfileTool.dll" (ByVal gridPath As String)  as logical
 '****************************************************************************
 ' Declare sub procedures
 '****************************************************************************
@@ -67,6 +70,7 @@ Declare Sub cycleThroughGrids
 Declare Sub OpenGrid(ByVal gridPath As String)
 Declare Sub closeGrid
 Declare Function getGridZvalues(ByVal iX As Float, ByVal iY As Float) as float
+declare sub ShowAbout
 
 ' Handlers for dialog controls: 
 Declare Sub bye 
@@ -136,11 +140,23 @@ else
 	dim thePath as string  
 	thePath = ApplicationDirectory$( ) + "ProfileTool.mbx"
 	regTool = RegisterTool("ProfileTool", "Get Elevation profiles",thePath,"JWilcock",1)
+	call CreateBlank()
 end if
 
 
  call loader
      'Show 
+
+'add menu to tools
+	Create Menu "Profile &Tool" as
+		"Show &Tool" Calling loader,
+		"(-",
+		"&About" calling ShowAbout,
+		"E&xit" calling bye
+
+  	Alter Menu "Tools" Add "Profile &Tool" As "Profile &Tool"
+
+
 
 'create ptool hidden button pad 
 Create ButtonPad "ProfileTool"  As
@@ -195,7 +211,10 @@ Sub loader
     Resume Next
 End Sub
 
-
+sub ShowAbout
+	dim iret as logical
+	iret = About()
+End Sub
 
 '*****************************************************************
 ' If user chooses Close menu item, shut down. 
@@ -291,6 +310,8 @@ end sub
                 xsec_count= 1
                 
                 Dim angle As Float 
+
+                'print "debug" +  (xList(vert + 1) - xList(vert)) + ", " + (yList(vert + 1) - yList(vert))   
                 angle = (Atn((xList(vert + 1) - xList(vert)) / (yList(vert + 1) - yList(vert)))) / (Pi / 180)  'must convert from rads
                 if verbose = true then
                 	print "angle " + vert + ":" + angle
@@ -333,7 +354,7 @@ end sub
                 cum_xsec_remainder = cum_xsec_remainder + xsec_remainder
             Next
 
-            'now get the z values
+            'now get the z values - MOVED now re-ordered 
             'call cycleThroughGrids()
         End Sub
 
@@ -349,6 +370,12 @@ end sub
         'reset return string to blank
         ReturnString = ""
         
+        'set coord system - based on mapper window. this will default to that of a grid
+        dim coord as string
+        coord = "Set " + mapperinfo(frontwindow(),17) 'coord sys
+        Run Command coord
+        call ProfileTool()
+        
             'cycles through grids listed in checkedlistbox1, gets z values for those that are checked
             dim i As Integer
             dim numberOfGrids as integer
@@ -360,13 +387,22 @@ end sub
             End If
             For i  = 0 To numberOfGrids - 1
                 If nextGrid(i) = True Then
-                   call populateZlist(gridPath(i))
-                   
+                	'check grid is still in mapper, if so populate z values
+                	if checkGridinMapper(gridPath(i)) then
+                		call populateZlist(gridPath(i))             		
+                	End If
+                                    
                    'add break to returnstring to denote a new grid
                    ReturnString = ReturnString + "|"
                 End If
 
             Next
+			
+			'check for blank string - if so exit
+			if len(returnString) < numberOfGrids +1 then
+				exit sub
+			End If
+			
 			
 			 'validate - if no grids checked then exit
 			if returnString = "" then
@@ -437,7 +473,7 @@ end sub
 			'add grid name as a header
 			ReturnString = ReturnString +  PathToTableName$(gridPath)
 
-			call ProfileTool()
+			'call ProfileTool()
 
 			dim i As Integer
 			'print "intervals for z extraction: " + ubound(xIntervalList) - 1
@@ -502,12 +538,13 @@ end sub
 			'coord = "set CoordSys Earth Projection 10, 157, " + chr$(34) + "m" + chr$(34) + ", 0 Bounds (-20037508.3428, -20037508.343) (20037508.3428, 20037508.343)" 'google mecrator
 			'coord = "set  CoordSys Earth Projection 8, 79, " + chr$(34) + "m" + chr$(34) + ", -2, 49, 0.9996012717, 400000, -100000 Bounds (-7845061.1011, -15524202.1641) (8645061.1011, 4470074.53373)" 'BNG
 			'get coord sys of grid file - do not use from grid handler, may be wrong
-			coord = "Set " + tableinfo(PathToTableName$( tabPath ),29) 'coord with bounds
-			if verbose = true then
-				print "grid coord sys: " + tableinfo(PathToTableName$( tabPath ),30)
-			end if
 			
-            Run Command coord
+'			coord = "Set " + tableinfo(PathToTableName$( tabPath ),29) 'coord with bounds
+'			if verbose = true then
+'				print "grid coord sys: " + tableinfo(PathToTableName$( tabPath ),30)
+'			end if
+'			
+'            Run Command coord
             
             iret = GE_StartRead(hGrid)
             If Not iret Then
@@ -537,8 +574,10 @@ end sub
             x = iX
             y = iY
             ' convert position in  coordinates and extract corresponding z value
-            lCol = (Widt * (x - XMin) / (XMax - XMin)) + 0.5
-            lRow = (Heig - Heig * (y - YMin) / (yMax - YMin)) + 0.5
+            'based on code examples from J.Paris. however this is slightly wrong.  all grid values are pulled from cells 1 row and column out. this is why there is an extra "-1" on the row and column calc below
+            'it's probaly more likley that MapInfo is reporting the wrong grid values ! and the great J.P was correct.
+            lCol = (Widt * (x - XMin) / (XMax - XMin)) + 0.5 - 1
+            lRow = (Heig - Heig * (y - YMin) / (yMax - YMin)) + 0.5 - 1
             xx = XMin + (XMax - XMin) / Widt * (lCol - 0.5)
             yy = Ymax - (YMax - YMin) / Heig * (lRow - 0.5)
             iret = GE_GetContinuousValue(hGrid, lCol, lRow, pdvalue, puchIsNull)

@@ -81,7 +81,7 @@ Namespace ProfileTool
             InitializeComponent()
             'mut = New Mutex(False, mutexName)
 
-            'check for blank file used in search operations - this is used as a flag to see if OSTools has been installed, if not it is autoregestered by the MBX
+            'check for blank file  - this is used as a flag to see if profiletool has been installed, if not it is autoregestered by the MBX
             CreateBlank()
         End Sub
 
@@ -150,13 +150,12 @@ Namespace ProfileTool
 
 #Region "[HELPERS]"
 
-        Sub CreateBlank()
+        Public Shared Sub CreateBlank()
             'create blank tab is it does not exist
             Dim MIfolderDir As String = InteropServices.MapInfoApplication.Eval("GetFolderPath$(-3)")
             If Not System.IO.File.Exists(MIfolderDir & "\ProfileTool.tab") Then
-
-                InteropServices.MapInfoApplication.Do("Create Table blank(blank Char(30)) file " & Chr(34) & MIfolderDir & "\blank.tab" & Chr(34))
-                InteropServices.MapInfoApplication.Do("open table " & Chr(34) & MIfolderDir & "\blank.tab" & Chr(34) & " as blank hide readonly")
+                InteropServices.MapInfoApplication.Do("Create Table blank(blank Char(30)) file " & Chr(34) & MIfolderDir & "\ProfileTool.tab" & Chr(34))
+                InteropServices.MapInfoApplication.Do("open table " & Chr(34) & MIfolderDir & "\ProfileTool.tab" & Chr(34) & " as ProfileTool hide readonly")
                 InteropServices.MapInfoApplication.Do("create map for blank CoordSys Earth Projection 8, 79, " & Chr(34) & "m" & Chr(34) & ", -2, 49, 0.9996012717, 400000, -100000 Bounds (-7845061.1011, -15524202.1641) (8645061.1011, 4470074.53373)")
                 InteropServices.MapInfoApplication.Do("close table blank")
             End If
@@ -168,6 +167,12 @@ Namespace ProfileTool
 
 
         'functions called from MapBasic ***************************************
+
+        Public Shared Function About() As Boolean
+            Dim AB As New AboutBox1
+            AB.ShowDialog()
+            Return True
+        End Function
 
         Public Shared Function nextGrid(ByVal x As Integer) As Boolean
             Return InteropHelper.theDlg.CheckedListBox1.GetItemChecked(x)
@@ -233,7 +238,7 @@ Namespace ProfileTool
             currentArray = gridStrings(gridStrings.Length - 3).Split(",")
             allHeaders.Add(currentArray(0))
             InteropHelper.theDlg.DataGridView1.Columns.Add("Distance", currentArray(0))
-            For x As Integer = 1 To nSamples
+            For x As Integer = 1 To UBound(currentArray) - 1 'nSamples
                 arrayGrid(0, x) = currentArray(x)
                 'add to rows
                 InteropHelper.theDlg.DataGridView1.Rows(x - 1).Cells("ID").Value = x
@@ -244,7 +249,7 @@ Namespace ProfileTool
             currentArray = gridStrings(gridStrings.Length - 2).Split(",")
             InteropHelper.theDlg.DataGridView1.Columns.Add("X", currentArray(0))
             allHeaders.Add(currentArray(0))
-            For x As Integer = 1 To nSamples
+            For x As Integer = 1 To UBound(currentArray) - 1 'nSamples
                 arrayGrid(1, x) = currentArray(x)
                 'add to rows
                 InteropHelper.theDlg.DataGridView1.Rows(x - 1).Cells("X").Value = currentArray(x)
@@ -254,7 +259,7 @@ Namespace ProfileTool
             currentArray = gridStrings(gridStrings.Length - 1).Split(",")
             InteropHelper.theDlg.DataGridView1.Columns.Add("Y", currentArray(0))
             allHeaders.Add(currentArray(0))
-            For x As Integer = 1 To nSamples
+            For x As Integer = 1 To UBound(currentArray) - 1 'nSamples
                 arrayGrid(2, x) = currentArray(x)
                 'add to rows
                 InteropHelper.theDlg.DataGridView1.Rows(x - 1).Cells("Y").Value = currentArray(x)
@@ -271,7 +276,7 @@ Namespace ProfileTool
                 allSeries(z).Name = currentArray(0)
                 allSeries(z).ChartType = SeriesChartType.Line
 
-                For x As Integer = 1 To nSamples
+                For x As Integer = 1 To UBound(currentArray) - 1 'nSamples
                     arrayGrid(z + 3, x) = currentArray(x)
                     'add to rows
                     InteropHelper.theDlg.DataGridView1.Rows(x - 1).Cells("Z" & CStr(z)).Value = currentArray(x)
@@ -297,7 +302,6 @@ Namespace ProfileTool
                 'add the series to the chart
                 InteropHelper.theDlg.Chart1.Series.Add(allSeries(z))
             Next
-
             InteropHelper.theDlg.Chart1.ChartAreas(0).AxisY.Minimum = graphMIN
             InteropHelper.theDlg.Chart1.ChartAreas(0).AxisY.Maximum = graphMAX
 
@@ -351,7 +355,29 @@ Namespace ProfileTool
         End Sub
 
 
+        Public Shared Function checkGridinMapper(ByVal gridPath As String) As Boolean
+            'function checks if the grid is still present in the mapper since the grid-refresh button was pressed
 
+            'get front mapper
+            Dim FrontWinID As Integer = InteropServices.MapInfoApplication.Eval("FrontWindow()")
+
+            'check its a mapper
+            If InteropServices.MapInfoApplication.Eval("WindowInfo(" & FrontWinID & ",3 )") <> 1 Then
+                Return False
+            End If
+            'get number of layers
+            Dim numLayers As Integer = InteropServices.MapInfoApplication.Eval("MapperInfo(" & FrontWinID & ", 9 )")
+
+            'cycle through layers - if grid present return true
+            For i As Integer = 1 To numLayers
+                If InteropServices.MapInfoApplication.Eval("LayerInfo(" & FrontWinID & ", " & i & ", 24)") = 4 Then '4 is grid layer
+                    If gridPath = InteropServices.MapInfoApplication.Eval("LayerInfo(" & FrontWinID & ", " & i & ", 8 )") Then
+                        Return True
+                    End If
+                End If
+            Next
+
+        End Function
 
 
 
@@ -379,7 +405,7 @@ Namespace ProfileTool
 
         End Sub
 
-    
+
 
         Sub exportCSV()
             Dim FSA As New SaveFileDialog
@@ -470,7 +496,7 @@ Namespace ProfileTool
         End Sub
 
         Private Sub ToolStripButton2_Click(sender As Object, e As EventArgs) Handles ToolStripButton2.Click
-            saveChartasimage()
+            saveChartasImage()
         End Sub
 
 
@@ -518,7 +544,7 @@ Namespace ProfileTool
             'build new grapher string
             Dim graphString As String = ""
             'V6  + graph 'graphString = "Graph ID," & zString.Substring(1) & " From " & tableName & " Using " & MIGraphTemplates & " Series In Columns"
-            graphString = "Graph  ID, " & zString.Substring(1) & "  From " & tableName & ""
+            graphString = "Graph  Distance, " & zString.Substring(1) & "  From " & tableName & ""
             InteropServices.MapInfoApplication.Do(graphString)
 
             'get front window

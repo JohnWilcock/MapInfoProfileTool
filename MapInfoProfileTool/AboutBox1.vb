@@ -1,4 +1,9 @@
-﻿Public NotInheritable Class AboutBox1
+﻿Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.InteropServices
+Imports MapInfo.MiPro.Interop
+
+Public NotInheritable Class AboutBox1
 
     Private Sub AboutBox1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         ' Set the title of the form.
@@ -25,6 +30,23 @@
 
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        getHelp()
+    End Sub
+
+    Sub getHelp()
+        'check help file exists
+        'save help to MI directory to prevent Microsoft Security Updates 896358 & 840315  from blocking it 
+        'http://stackoverflow.com/questions/11438634/opening-a-chm-file-produces-navigation-to-the-webpage-was-canceled
+
+        Dim cur_dir As String = InteropServices.MapInfoApplication.Eval("GetFolderPath$(-4 )")
+        If File.Exists(cur_dir & "ProfileToolHelp.chm") Then
+        Else
+            My.Computer.FileSystem.WriteAllBytes(cur_dir & "ProfileToolHelp.chm", My.Resources.ProfileToolHelp, False)
+        End If
+        ' MsgBox(cur_dir & "ProfileToolHelp.chm")
+        'run help file
+        'System.Windows.Forms.Help.ShowHelp(Me, cur_dir & "ProfileToolHelp.chm", HelpNavigator.TableOfContents)
+        System.Diagnostics.Process.Start(cur_dir & "ProfileToolHelp.chm")
 
     End Sub
 End Class

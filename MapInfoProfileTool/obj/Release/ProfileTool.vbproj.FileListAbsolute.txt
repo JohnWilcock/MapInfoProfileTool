@@ -1,0 +1,7 @@
+\\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.vbprojResolveAssemblyReference.cache
+\\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\AboutBox1.resources
+\\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\Resources.resources
+\\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.Dlg.resources
+\\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.vbproj.GenerateResource.Cache
+\\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.dll
+\\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\ProfileTool.dll

@@ -108,6 +108,16 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property ProfileToolHelp() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("ProfileToolHelp", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to About {0}.
         '''</summary>
         Friend ReadOnly Property STR_ABOUT() As String
