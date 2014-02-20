@@ -311,8 +311,8 @@ end sub
                 
                 Dim angle As Float 
 
-                'print "debug" +  (xList(vert + 1) - xList(vert)) + ", " + (yList(vert + 1) - yList(vert))   
-                angle = (Atn((xList(vert + 1) - xList(vert)) / (yList(vert + 1) - yList(vert)))) / (Pi / 180)  'must convert from rads
+                'an error occurs if x coordinates are identical as Y coord minus Y coord will be 0 and then division by 0 will occur. to fix this + 0.00000001 is added to the first y coord 
+                angle = (Atn(((xList(vert + 1)) - xList(vert)) / ((yList(vert + 1)+ 0.00000001) - yList(vert)))) / (Pi / 180)  'must convert from rads
                 if verbose = true then
                 	print "angle " + vert + ":" + angle
 				end if

@@ -226,13 +226,14 @@ Namespace ProfileTool
 
             'split string into grids
             gridStrings = ReturnString.Split("|")
-            ReDim arrayGrid(gridStrings.Length, InteropHelper.theDlg.NumericUpDown1.Value)
+            'NEVER use nSample (the number of original samples requested) as this is not the amount returned. every polyline segment may increase this by 1
+            ReDim arrayGrid(gridStrings.Length, gridStrings(gridStrings.Length - 3).Split(",").Length)
 
             'setup datagrid
             InteropHelper.theDlg.DataGridView1.Columns.Clear()
             InteropHelper.theDlg.DataGridView1.Columns.Add("ID", "ID")
             InteropHelper.theDlg.DataGridView1.Rows.Clear()
-            InteropHelper.theDlg.DataGridView1.Rows.Add(nSamples)
+            InteropHelper.theDlg.DataGridView1.Rows.Add(gridStrings(gridStrings.Length - 3).Split(",").Length)
 
             'x values 
             currentArray = gridStrings(gridStrings.Length - 3).Split(",")
@@ -423,7 +424,7 @@ Namespace ProfileTool
             For h As Integer = 0 To DataGridView1.Columns.Count - 1
                 tempString = tempString & "," & DataGridView1.Columns(h).HeaderText
             Next
-            csvFile.WriteLine(tempString.Substring(1))
+            csvFile.WriteLine(tempString)
 
             'for each row
             For i As Integer = 0 To DataGridView1.Rows.Count - 1
@@ -432,7 +433,7 @@ Namespace ProfileTool
                 For j As Integer = 0 To DataGridView1.Columns.Count - 1
                     tempString = tempString & "," & DataGridView1.Rows(i).Cells(j).Value
                 Next
-                csvFile.WriteLine(tempString.Substring(1))
+                csvFile.WriteLine(tempString)
             Next
 
             csvFile.Close()
