@@ -9,7 +9,7 @@ Namespace ProfileTool
 
 #Region "[GET APP VERSION]"
 
-        Private Const SYS_INFO_APPVERSION As Integer = 2 ' Used with SystemInfo to get appversion
+        Private Const SYS_INFO_APPVERSION As Integer = 3 ' Used with SystemInfo to get appversion
 
         ''' <summary>
         ''' Gets the MapInfo Professional version number

@@ -5,3 +5,10 @@
 \\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.vbproj.GenerateResource.Cache
 \\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.dll
 \\FGBD101001.wsatkins.com\GBPEB_Home$\wilc8340\Desktop\GitHub\MapInfoProfileTool\ProfileTool.dll
+H:\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.vbprojResolveAssemblyReference.cache
+H:\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\AboutBox1.resources
+H:\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\Resources.resources
+H:\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.Dlg.resources
+H:\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.vbproj.GenerateResource.Cache
+H:\wilc8340\Desktop\GitHub\MapInfoProfileTool\MapInfoProfileTool\obj\Release\ProfileTool.dll
+H:\wilc8340\Desktop\GitHub\MapInfoProfileTool\ProfileTool.dll
